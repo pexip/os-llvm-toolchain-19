@@ -2,7 +2,7 @@ Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
 ===================================================================
 --- llvm-toolchain-19.orig/clang/cmake/modules/AddGRPC.cmake
 +++ llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
-@@ -9,6 +9,22 @@ function(generate_clang_protos_library L
+@@ -9,6 +9,31 @@ function(generate_clang_protos_library L
    if (ABSL_SYNCHRONIZATION_LIBRARY)
      list(APPEND LINKED_GRPC_LIBRARIES absl_synchronization)
    endif()
@@ -15,11 +15,20 @@ Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
 +  if (ABSL_CORD_INTERNAL_LIBRARY)
 +    list(APPEND LINKED_GRPC_LIBRARIES absl_cord_internal)
 +  endif()
++  if (ABSL_CORDZ_INFO_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_cordz_info)
++  endif()
++  if (ABSL_CORDZ_FUNCTIONS_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_cordz_functions)
++  endif()
 +  if (ABSL_LOGINTERNAL_MESSAGE_LIBRARY)
 +    list(APPEND LINKED_GRPC_LIBRARIES absl_log_internal_message)
 +  endif()
 +  if (ABSL_LOGINTERNAL_CHECK_OP_LIBRARY)
 +    list(APPEND LINKED_GRPC_LIBRARIES absl_log_internal_check_op)
++  endif()
++  if (ABSL_LOGINTERNAL_NULLGUARD_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_log_internal_nullguard)
 +  endif()
 +
    add_clang_library(${LibraryName} ${ProtoSource}
@@ -29,7 +38,7 @@ Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
 ===================================================================
 --- llvm-toolchain-19.orig/cmake/Modules/FindGRPC.cmake
 +++ llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
-@@ -104,6 +104,41 @@ else()
+@@ -104,6 +104,63 @@ else()
        set_target_properties(absl_synchronization PROPERTIES IMPORTED_LOCATION ${ABSL_SYNCHRONIZATION_LIBRARY})
      endif()
  
@@ -54,6 +63,20 @@ Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
 +      set_target_properties(absl_cord_internal PROPERTIES IMPORTED_LOCATION ${ABSL_CORD_INTERNAL_LIBRARY})
 +    endif()
 +
++    find_library(ABSL_CORDZ_INFO_LIBRARY absl_cordz_info ${GRPC_OPTS} QUIET)
++    if (ABSL_CORDZ_INFO_LIBRARY)
++      add_library(absl_cordz_info UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_cordz_info: " ${ABSL_CORDZ_INFO_LIBRARY})
++      set_target_properties(absl_cordz_info PROPERTIES IMPORTED_LOCATION ${ABSL_CORDZ_INFO_LIBRARY})
++    endif()
++
++    find_library(ABSL_CORDZ_FUNCTIONS_LIBRARY absl_cordz_functions ${GRPC_OPTS} QUIET)
++    if (ABSL_CORDZ_FUNCTIONS_LIBRARY)
++      add_library(absl_cordz_functions UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_cordz_functions: " ${ABSL_CORDZ_FUNCTIONS_LIBRARY})
++      set_target_properties(absl_cordz_functions PROPERTIES IMPORTED_LOCATION ${ABSL_CORDZ_FUNCTIONS_LIBRARY})
++    endif()
++
 +    find_library(ABSL_LOGINTERNAL_MESSAGE_LIBRARY absl_log_internal_message ${GRPC_OPTS} QUIET)
 +    if (ABSL_LOGINTERNAL_MESSAGE_LIBRARY)
 +      add_library(absl_log_internal_message UNKNOWN IMPORTED GLOBAL)
@@ -67,6 +90,14 @@ Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
 +      message(STATUS "Using absl_log_internal_check_op: " ${ABSL_LOGINTERNAL_CHECK_OP_LIBRARY})
 +      set_target_properties(absl_log_internal_check_op PROPERTIES IMPORTED_LOCATION ${ABSL_LOGINTERNAL_CHECK_OP_LIBRARY})
 +    endif()
++
++    find_library(ABSL_LOGINTERNAL_NULLGUARD_LIBRARY absl_log_internal_nullguard ${GRPC_OPTS} QUIET)
++    if (ABSL_LOGINTERNAL_NULLGUARD_LIBRARY)
++      add_library(absl_log_internal_nullguard UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_log_internal_nullguard: " ${ABSL_LOGINTERNAL_NULLGUARD_LIBRARY})
++      set_target_properties(absl_log_internal_nullguard PROPERTIES IMPORTED_LOCATION ${ABSL_LOGINTERNAL_NULLGUARD_LIBRARY})
++    endif()
++
 +
      if (ENABLE_GRPC_REFLECTION)
        find_library(GRPC_REFLECTION_LIBRARY grpc++_reflection ${GRPC_OPTS} REQUIRED)
