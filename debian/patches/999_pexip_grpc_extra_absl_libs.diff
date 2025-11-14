@@ -1,0 +1,53 @@
+Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
+===================================================================
+--- llvm-toolchain-19.orig/clang/cmake/modules/AddGRPC.cmake
++++ llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
+@@ -9,6 +9,16 @@ function(generate_clang_protos_library L
+   if (ABSL_SYNCHRONIZATION_LIBRARY)
+     list(APPEND LINKED_GRPC_LIBRARIES absl_synchronization)
+   endif()
++  if (ABSL_STRINGS_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_strings)
++  endif()
++  if (ABSL_CORD_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_cord)
++  endif()
++  if (ABSL_LOGINTERNAL_MESSAGE_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_log_internal_message)
++  endif()
++
+   add_clang_library(${LibraryName} ${ProtoSource}
+     PARTIAL_SOURCES_INTENDED
+     LINK_LIBS PUBLIC  ${LINKED_GRPC_LIBRARIES})
+Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
+===================================================================
+--- llvm-toolchain-19.orig/cmake/Modules/FindGRPC.cmake
++++ llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
+@@ -104,6 +104,27 @@ else()
+       set_target_properties(absl_synchronization PROPERTIES IMPORTED_LOCATION ${ABSL_SYNCHRONIZATION_LIBRARY})
+     endif()
+ 
++    find_library(ABSL_STRINGS_LIBRARY absl_strings ${GRPC_OPTS} QUIET)
++    if (ABSL_STRINGS_LIBRARY)
++      add_library(absl_strings UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_strings: " ${ABSL_STRINGS_LIBRARY})
++      set_target_properties(absl_strings PROPERTIES IMPORTED_LOCATION ${ABSL_STRINGS_LIBRARY})
++    endif()
++
++    find_library(ABSL_CORD_LIBRARY absl_cord ${GRPC_OPTS} QUIET)
++    if (ABSL_CORD_LIBRARY)
++      add_library(absl_cord UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_cord: " ${ABSL_CORD_LIBRARY})
++      set_target_properties(absl_cord PROPERTIES IMPORTED_LOCATION ${ABSL_CORD_LIBRARY})
++    endif()
++
++    find_library(ABSL_LOGINTERNAL_MESSAGE_LIBRARY absl_log_internal_message ${GRPC_OPTS} QUIET)
++    if (ABSL_LOGINTERNAL_MESSAGE_LIBRARY)
++      add_library(absl_log_internal_message UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_log_internal_message: " ${ABSL_LOGINTERNAL_MESSAGE_LIBRARY})
++      set_target_properties(absl_log_internal_message PROPERTIES IMPORTED_LOCATION ${ABSL_LOGINTERNAL_MESSAGE_LIBRARY})
++    endif()
++
+     if (ENABLE_GRPC_REFLECTION)
+       find_library(GRPC_REFLECTION_LIBRARY grpc++_reflection ${GRPC_OPTS} REQUIRED)
+       add_library(grpc++_reflection UNKNOWN IMPORTED GLOBAL)

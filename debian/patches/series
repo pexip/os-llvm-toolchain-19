@@ -141,3 +141,4 @@ ubuntu-plucky.patch
 bolt-disable-proc-check.diff
 python3.13-quote.diff
 999_pexip_protobuf31_changes.diff
+999_pexip_grpc_extra_absl_libs.diff
