@@ -2,7 +2,7 @@ Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
 ===================================================================
 --- llvm-toolchain-19.orig/clang/cmake/modules/AddGRPC.cmake
 +++ llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
-@@ -9,6 +9,31 @@ function(generate_clang_protos_library L
+@@ -9,6 +9,34 @@ function(generate_clang_protos_library L
    if (ABSL_SYNCHRONIZATION_LIBRARY)
      list(APPEND LINKED_GRPC_LIBRARIES absl_synchronization)
    endif()
@@ -30,6 +30,9 @@ Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
 +  if (ABSL_LOGINTERNAL_NULLGUARD_LIBRARY)
 +    list(APPEND LINKED_GRPC_LIBRARIES absl_log_internal_nullguard)
 +  endif()
++  if (ABSL_STATUS_LIBRARY)
++    list(APPEND LINKED_GRPC_LIBRARIES absl_status)
++  endif()
 +
    add_clang_library(${LibraryName} ${ProtoSource}
      PARTIAL_SOURCES_INTENDED
@@ -38,7 +41,7 @@ Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
 ===================================================================
 --- llvm-toolchain-19.orig/cmake/Modules/FindGRPC.cmake
 +++ llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
-@@ -104,6 +104,63 @@ else()
+@@ -104,6 +104,69 @@ else()
        set_target_properties(absl_synchronization PROPERTIES IMPORTED_LOCATION ${ABSL_SYNCHRONIZATION_LIBRARY})
      endif()
  
@@ -98,6 +101,12 @@ Index: llvm-toolchain-19/cmake/Modules/FindGRPC.cmake
 +      set_target_properties(absl_log_internal_nullguard PROPERTIES IMPORTED_LOCATION ${ABSL_LOGINTERNAL_NULLGUARD_LIBRARY})
 +    endif()
 +
++    find_library(ABSL_STATUS_LIBRARY absl_status ${GRPC_OPTS} QUIET)
++    if (ABSL_STATUS_LIBRARY)
++      add_library(absl_status UNKNOWN IMPORTED GLOBAL)
++      message(STATUS "Using absl_status: " ${ABSL_STATUS_LIBRARY})
++      set_target_properties(absl_status PROPERTIES IMPORTED_LOCATION ${ABSL_STATUS_LIBRARY})
++    endif()
 +
      if (ENABLE_GRPC_REFLECTION)
        find_library(GRPC_REFLECTION_LIBRARY grpc++_reflection ${GRPC_OPTS} REQUIRED)
