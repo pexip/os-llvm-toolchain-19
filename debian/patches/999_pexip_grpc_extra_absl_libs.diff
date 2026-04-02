@@ -1,3 +1,5 @@
+Add extra libraries to linker to use the shared ABSL libraries which are
+available in PexOS.
 Index: llvm-toolchain-19/clang/cmake/modules/AddGRPC.cmake
 ===================================================================
 --- llvm-toolchain-19.orig/clang/cmake/modules/AddGRPC.cmake

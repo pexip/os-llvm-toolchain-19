@@ -1,3 +1,5 @@
+Fix up protobuf usage for compatibility with newer versions of the protobuf
+library.
 Index: llvm-toolchain-19/clang-tools-extra/clangd/index/remote/monitor/Monitor.cpp
 ===================================================================
 --- llvm-toolchain-19.orig/clang-tools-extra/clangd/index/remote/monitor/Monitor.cpp
